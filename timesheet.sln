@@ -4,8 +4,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "timesheet", "timesheet\timesheet.csproj", "{0EFA53F2-747E-443F-996A-76A3DD7FFC96}"
+	ProjectSection(ProjectDependencies) = postProject
+		{274206DB-0733-406C-9A34-B3EAEBA26A88} = {274206DB-0733-406C-9A34-B3EAEBA26A88}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "domainEntities", "domainEntities\domainEntities.csproj", "{274206DB-0733-406C-9A34-B3EAEBA26A88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "repository", "repository\repository.csproj", "{24D69B4E-8587-403D-B290-E57A731E7FAA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{274206DB-0733-406C-9A34-B3EAEBA26A88} = {274206DB-0733-406C-9A34-B3EAEBA26A88}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +29,10 @@ Global
 		{274206DB-0733-406C-9A34-B3EAEBA26A88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{274206DB-0733-406C-9A34-B3EAEBA26A88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{274206DB-0733-406C-9A34-B3EAEBA26A88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24D69B4E-8587-403D-B290-E57A731E7FAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24D69B4E-8587-403D-B290-E57A731E7FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24D69B4E-8587-403D-B290-E57A731E7FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24D69B4E-8587-403D-B290-E57A731E7FAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
