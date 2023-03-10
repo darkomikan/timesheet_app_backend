@@ -1,4 +1,4 @@
-﻿namespace timesheet.Models;
+﻿namespace domainEntities.Models;
 
 public class Client
 {
