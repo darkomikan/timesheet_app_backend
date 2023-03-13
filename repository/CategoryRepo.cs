@@ -11,16 +11,16 @@ namespace repository
 {
     public class CategoryRepo : IRepository<Category>
     {
-        private readonly MySqlConnection connection;
+        private readonly AppContext appContext;
 
         public CategoryRepo(AppContext appContext) 
         {
-            connection = appContext.Connection;
+            this.appContext = appContext;
         }
 
         public void Delete(int id)
         {
-            var command = connection.CreateCommand();
+            var command = appContext.Connection.CreateCommand();
             command.CommandText =
             @"
                 DELETE FROM categories
@@ -32,7 +32,7 @@ namespace repository
 
         public Category Get(int id)
         {
-            var command = connection.CreateCommand();
+            var command = appContext.Connection.CreateCommand();
             command.CommandText =
             @"
                 SELECT category_id, name
@@ -50,7 +50,7 @@ namespace repository
         public Category[] GetAll()
         {
             List<Category> result = new List<Category>();
-            var command = connection.CreateCommand();
+            var command = appContext.Connection.CreateCommand();
             command.CommandText =
             @"
                 SELECT * FROM categories
@@ -63,12 +63,26 @@ namespace repository
 
         public void Insert(Category item)
         {
-            var command = connection.CreateCommand();
+            var command = appContext.Connection.CreateCommand();
             command.CommandText = 
             @"
                 INSERT INTO categories (name) VALUES (@name)
             ";
             command.Parameters.AddWithValue("@name", item.Name);
+            command.ExecuteNonQuery();
+        }
+
+        public void Update(Category item)
+        {
+            var command = appContext.Connection.CreateCommand();
+            command.CommandText =
+            @"
+                UPDATE categories
+                SET name = @name
+                WHERE category_id = @id
+            ";
+            command.Parameters.AddWithValue("@name", item.Name);
+            command.Parameters.AddWithValue("@id", item.Id);
             command.ExecuteNonQuery();
         }
     }

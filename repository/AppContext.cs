@@ -11,9 +11,9 @@ namespace repository
     {
         public MySqlConnection Connection { get; }
 
-        public AppContext() 
+        public AppContext(string connectionString) 
         {
-            Connection = new MySqlConnection("server=localhost;userid=root;password=praksa;database=timesheet_db");
+            Connection = new MySqlConnection(connectionString);
             Connection.Open();
         }
 

@@ -12,5 +12,6 @@ namespace repository
         T Get(int id);
         T[] GetAll();
         void Insert(T item);
+        void Update(T item);
     }
 }
