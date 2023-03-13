@@ -24,9 +24,9 @@ namespace repository
             command.CommandText =
             @"
                 DELETE FROM categories
-                WHERE category_id = $id
+                WHERE category_id = @id
             ";
-            command.Parameters.AddWithValue("$id", id);
+            command.Parameters.AddWithValue("@id", id);
             command.ExecuteNonQuery();
         }
 
@@ -37,9 +37,9 @@ namespace repository
             @"
                 SELECT category_id, name
                 FROM categories
-                WHERE category_id = $id
+                WHERE category_id = @id
             ";
-            command.Parameters.AddWithValue("$id", id);
+            command.Parameters.AddWithValue("@id", id);
             using var reader = command.ExecuteReader();
             if (reader.Read())
                 return new Category { Id = reader.GetInt32("category_id"), Name = reader.GetString("name") };
@@ -49,7 +49,7 @@ namespace repository
 
         public Category[] GetAll()
         {
-            ArrayList result = new ArrayList();
+            List<Category> result = new List<Category>();
             var command = connection.CreateCommand();
             command.CommandText =
             @"
@@ -58,7 +58,7 @@ namespace repository
             using var reader = command.ExecuteReader();
             while (reader.Read()) 
                 result.Add(new Category { Id = reader.GetInt32("category_id"), Name  = reader.GetString("name") });
-            return (Category[]) result.ToArray();
+            return result.ToArray();
         }
 
         public void Insert(Category item)
@@ -66,9 +66,9 @@ namespace repository
             var command = connection.CreateCommand();
             command.CommandText = 
             @"
-                INSERT INTO categories (name) VALUES ($name)
+                INSERT INTO categories (name) VALUES (@name)
             ";
-            command.Parameters.AddWithValue("$name", item.Name);
+            command.Parameters.AddWithValue("@name", item.Name);
             command.ExecuteNonQuery();
         }
     }

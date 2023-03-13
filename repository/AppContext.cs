@@ -13,7 +13,7 @@ namespace repository
 
         public AppContext() 
         {
-            Connection = new MySqlConnection("server=localhost;userid=root;password=praksa;database=timesheet");
+            Connection = new MySqlConnection("server=localhost;userid=root;password=praksa;database=timesheet_db");
             Connection.Open();
         }
 
