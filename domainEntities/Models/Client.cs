@@ -8,4 +8,5 @@ public class Client
     public string City { get; set; }
     public string Zip { get; set; }
     public string Country { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }

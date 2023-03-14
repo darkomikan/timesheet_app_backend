@@ -23,9 +23,11 @@ namespace repository
             var command = appContext.Connection.CreateCommand();
             command.CommandText =
             @"
-                DELETE FROM categories
+                UPDATE categories
+                SET deleted_at = @date
                 WHERE category_id = @id
             ";
+            command.Parameters.AddWithValue("@date", DateTime.Now);
             command.Parameters.AddWithValue("@id", id);
             command.ExecuteNonQuery();
         }
@@ -37,7 +39,7 @@ namespace repository
             @"
                 SELECT category_id, name
                 FROM categories
-                WHERE category_id = @id
+                WHERE category_id = @id AND deleted_at IS NULL
             ";
             command.Parameters.AddWithValue("@id", id);
             using var reader = command.ExecuteReader();
@@ -54,10 +56,29 @@ namespace repository
             command.CommandText =
             @"
                 SELECT * FROM categories
+                WHERE deleted_at IS NULL
             ";
             using var reader = command.ExecuteReader();
             while (reader.Read()) 
                 result.Add(new Category { Id = reader.GetInt32("category_id"), Name  = reader.GetString("name") });
+            return result.ToArray();
+        }
+
+        public Category[] GetDeleted(DateTime from, DateTime to)
+        {
+            List<Category> result = new List<Category>();
+            var command = appContext.Connection.CreateCommand();
+            command.CommandText =
+            @"
+                SELECT * FROM categories
+                WHERE deleted_at >= @from AND deleted_at <= @to
+            ";
+            command.Parameters.AddWithValue("@from", from);
+            command.Parameters.AddWithValue("@to", to);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+                result.Add(new Category { Id = reader.GetInt32("category_id"), Name = reader.GetString("name"),
+                    DeletedAt = reader.GetDateTime("deleted_at") });
             return result.ToArray();
         }
 

@@ -11,6 +11,7 @@ namespace repository
         void Delete(int id);
         T Get(int id);
         T[] GetAll();
+        T[] GetDeleted(DateTime from, DateTime to);
         void Insert(T item);
         void Update(T item);
     }

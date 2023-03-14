@@ -22,4 +22,5 @@ public class Employee
     public string Email { get; set; }
     public EmployeeStatus Status { get; set; }
     public EmployeeRole Role { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }

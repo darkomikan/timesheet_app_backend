@@ -11,4 +11,5 @@ public class Record
     public string? Description { get; set; }
     public float Hours { get; set; }
     public float? Overtime { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }
