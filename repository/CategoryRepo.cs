@@ -64,24 +64,6 @@ namespace repository
             return result.ToArray();
         }
 
-        public Category[] GetDeleted(DateTime from, DateTime to)
-        {
-            List<Category> result = new List<Category>();
-            var command = appContext.Connection.CreateCommand();
-            command.CommandText =
-            @"
-                SELECT * FROM categories
-                WHERE deleted_at >= @from AND deleted_at <= @to
-            ";
-            command.Parameters.AddWithValue("@from", from);
-            command.Parameters.AddWithValue("@to", to);
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-                result.Add(new Category { Id = reader.GetInt32("category_id"), Name = reader.GetString("name"),
-                    DeletedAt = reader.GetDateTime("deleted_at") });
-            return result.ToArray();
-        }
-
         public void Insert(Category item)
         {
             var command = appContext.Connection.CreateCommand();
