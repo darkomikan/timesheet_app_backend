@@ -14,12 +14,6 @@ namespace repository
         public AppContext(string connectionString) 
         {
             Connection = new MySqlConnection(connectionString);
-            Connection.Open();
-        }
-
-        ~AppContext()
-        {
-            Connection.Close();
         }
     }
 }
