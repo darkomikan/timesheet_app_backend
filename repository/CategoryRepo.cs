@@ -13,15 +13,17 @@ namespace repository
     public class CategoryRepo : IRepository<Category>
     {
         private readonly IConfiguration configuration;
+        private readonly string connectionString;
 
         public CategoryRepo(IConfiguration configuration) 
         {
             this.configuration = configuration;
+            connectionString = configuration.GetConnectionString("timesheet_db")!;
         }
 
         public void Delete(int id)
         {
-            using MySqlConnection connection = new MySqlConnection(configuration.GetConnectionString("timesheet_db"));
+            using MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
             var command = connection.CreateCommand();
             command.CommandText =
@@ -37,7 +39,7 @@ namespace repository
 
         public Category? Get(int id)
         {
-            using MySqlConnection connection = new MySqlConnection(configuration.GetConnectionString("timesheet_db"));
+            using MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
             var command = connection.CreateCommand();
             command.CommandText =
@@ -57,7 +59,7 @@ namespace repository
         public Category[] GetAll()
         {
             List<Category> result = new List<Category>();
-            using MySqlConnection connection = new MySqlConnection(configuration.GetConnectionString("timesheet_db"));
+            using MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
             var command = connection.CreateCommand();
             command.CommandText =
@@ -73,7 +75,7 @@ namespace repository
 
         public void Insert(Category item)
         {
-            using MySqlConnection connection = new MySqlConnection(configuration.GetConnectionString("timesheet_db"));
+            using MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
             var command = connection.CreateCommand();
             command.CommandText =
@@ -86,7 +88,7 @@ namespace repository
 
         public void Update(Category item)
         {
-            using MySqlConnection connection = new MySqlConnection(configuration.GetConnectionString("timesheet_db"));
+            using MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
             var command = connection.CreateCommand();
             command.CommandText =
