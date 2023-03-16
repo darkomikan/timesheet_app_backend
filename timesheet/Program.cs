@@ -4,8 +4,6 @@ using repository;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-string dbConnectionString = builder.Configuration.GetConnectionString("timesheet_db");
-builder.Services.AddScoped(sp => new repository.AppContext(dbConnectionString));
 builder.Services.AddScoped<IRepository<Category>, CategoryRepo>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
