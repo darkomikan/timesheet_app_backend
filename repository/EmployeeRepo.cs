@@ -134,5 +134,34 @@ namespace repository
             command.Parameters.AddWithValue("@id", item.Id);
             command.ExecuteNonQuery();
         }
+
+        public Employee? GetByUsername(string username)
+        {
+            using MySqlConnection connection = new MySqlConnection(connectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText =
+            @"
+                SELECT *
+                FROM employees
+                WHERE username = @username AND deleted_at IS NULL
+            ";
+            command.Parameters.AddWithValue("@username", username);
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
+                return new Employee
+                {
+                    Id = reader.GetInt32("employee_id"),
+                    Name = reader.GetString("name"),
+                    Username = reader.GetString("username"),
+                    Password = reader.GetString("password"),
+                    Hours = reader.GetFloat("hours"),
+                    Email = reader.GetString("email"),
+                    Status = (Employee.EmployeeStatus)reader.GetInt32("status"),
+                    Role = (Employee.EmployeeRole)reader.GetInt32("role")
+                };
+            else
+                return null;
+        }
     }
 }
