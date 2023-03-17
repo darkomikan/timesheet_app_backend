@@ -11,15 +11,11 @@ namespace repository
 {
     public class ProjectRepo : IRepository<Project>
     {
-        private readonly IRepository<Client> clientRepo;
-        private readonly IRepository<Employee> employeeRepo;
         private readonly IConfiguration configuration;
         private readonly string connectionString;
 
-        public ProjectRepo(IConfiguration configuration, IRepository<Client> clientRepo, IRepository<Employee> employeeRepo)
+        public ProjectRepo(IConfiguration configuration)
         {
-            this.clientRepo = clientRepo;
-            this.employeeRepo = employeeRepo;
             this.configuration = configuration;
             connectionString = configuration.GetConnectionString("timesheet_db")!;
         }
@@ -47,9 +43,15 @@ namespace repository
             var command = connection.CreateCommand();
             command.CommandText =
             @"
-                SELECT *
-                FROM projects
-                WHERE project_id = @id AND deleted_at IS NULL
+                SELECT project_id, projects.client_id AS client_id, lead_id, projects.name AS pname, projects.description AS pdescription,
+                projects.status AS pstatus, projects.deleted_at AS deleted_at,
+                clients.name AS cname, clients.address AS caddress, clients.city AS ccity, clients.zip AS czip, clients.country AS ccountry,
+                employees.name AS ename, employees.username AS eusername, employees.password AS epassword, employees.hours AS ehours,
+                employees.email AS eemail, employees.status AS estatus, employees.role AS erole
+
+                FROM projects LEFT JOIN (clients, employees)
+                ON (clients.client_id = projects.client_id AND employees.employee_id = projects.lead_id)
+                WHERE project_id = @id AND projects.deleted_at IS NULL
             ";
             command.Parameters.AddWithValue("@id", id);
             using var reader = command.ExecuteReader();
@@ -57,11 +59,29 @@ namespace repository
                 return new Project
                 {
                     Id = reader.GetInt32("project_id"),
-                    Client = clientRepo.Get(reader.GetInt32("client_id")),
-                    Lead = employeeRepo.Get(reader.GetInt32("lead_id")),
-                    Name = reader.GetString("name"),
-                    Description = reader.GetString("description"),
-                    Status = (Project.ProjectStatus)reader.GetInt32("status")
+                    Client = new Client
+                    {
+                        Id = reader.GetInt32("client_id"),
+                        Name = reader.GetString("cname"),
+                        Address = reader.GetString("caddress"),
+                        City = reader.GetString("ccity"),
+                        Country = reader.GetString("ccountry"),
+                        Zip = reader.GetString("czip")
+                    },
+                    Lead = new Employee
+                    {
+                        Id = reader.GetInt32("lead_id"),
+                        Name = reader.GetString("ename"),
+                        Username = reader.GetString("eusername"),
+                        Password = reader.GetString("epassword"),
+                        Hours = reader.GetFloat("ehours"),
+                        Email = reader.GetString("eemail"),
+                        Status = (Employee.EmployeeStatus)reader.GetInt32("estatus"),
+                        Role = (Employee.EmployeeRole)reader.GetInt32("erole")
+                    },
+                    Name = reader.GetString("pname"),
+                    Description = reader.GetString("pdescription"),
+                    Status = (Project.ProjectStatus)reader.GetInt32("pstatus")
                 };
             else
                 return null;
@@ -75,19 +95,44 @@ namespace repository
             var command = connection.CreateCommand();
             command.CommandText =
             @"
-                SELECT * FROM projects
-                WHERE deleted_at IS NULL
+                SELECT project_id, projects.client_id AS client_id, lead_id, projects.name AS pname, projects.description AS pdescription,
+                projects.status AS pstatus, projects.deleted_at AS deleted_at,
+                clients.name AS cname, clients.address AS caddress, clients.city AS ccity, clients.zip AS czip, clients.country AS ccountry,
+                employees.name AS ename, employees.username AS eusername, employees.password AS epassword, employees.hours AS ehours,
+                employees.email AS eemail, employees.status AS estatus, employees.role AS erole
+
+                FROM projects LEFT JOIN (clients, employees)
+                ON (clients.client_id = projects.client_id AND employees.employee_id = projects.lead_id)
+                WHERE projects.deleted_at IS NULL
             ";
             using var reader = command.ExecuteReader();
             while (reader.Read())
                 result.Add(new Project
                 {
                     Id = reader.GetInt32("project_id"),
-                    Client = clientRepo.Get(reader.GetInt32("client_id")),
-                    Lead = employeeRepo.Get(reader.GetInt32("lead_id")),
-                    Name = reader.GetString("name"),
-                    Description = reader.GetString("description"),
-                    Status = (Project.ProjectStatus)reader.GetInt32("status")
+                    Client = new Client
+                    {
+                        Id = reader.GetInt32("client_id"),
+                        Name = reader.GetString("cname"),
+                        Address = reader.GetString("caddress"),
+                        City = reader.GetString("ccity"),
+                        Country = reader.GetString("ccountry"),
+                        Zip = reader.GetString("czip")
+                    },
+                    Lead = new Employee
+                    {
+                        Id = reader.GetInt32("lead_id"),
+                        Name = reader.GetString("ename"),
+                        Username = reader.GetString("eusername"),
+                        Password = reader.GetString("epassword"),
+                        Hours = reader.GetFloat("ehours"),
+                        Email = reader.GetString("eemail"),
+                        Status = (Employee.EmployeeStatus)reader.GetInt32("estatus"),
+                        Role = (Employee.EmployeeRole)reader.GetInt32("erole")
+                    },
+                    Name = reader.GetString("pname"),
+                    Description = reader.GetString("pdescription"),
+                    Status = (Project.ProjectStatus)reader.GetInt32("pstatus")
                 });
             return result.ToArray();
         }
