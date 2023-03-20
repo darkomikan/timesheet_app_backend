@@ -46,7 +46,7 @@ namespace repository
                 SELECT project_id, projects.client_id AS client_id, lead_id, projects.name AS pname, projects.description AS pdescription,
                 projects.status AS pstatus, projects.deleted_at AS deleted_at,
                 clients.name AS cname, clients.address AS caddress, clients.city AS ccity, clients.zip AS czip, clients.country AS ccountry,
-                employees.name AS ename, employees.username AS eusername, employees.password AS epassword, employees.hours AS ehours,
+                employees.name AS ename, employees.username AS eusername, employees.hours AS ehours,
                 employees.email AS eemail, employees.status AS estatus, employees.role AS erole
 
                 FROM projects LEFT JOIN (clients, employees)
@@ -73,7 +73,6 @@ namespace repository
                         Id = reader.GetInt32("lead_id"),
                         Name = reader.GetString("ename"),
                         Username = reader.GetString("eusername"),
-                        Password = reader.GetString("epassword"),
                         Hours = reader.GetFloat("ehours"),
                         Email = reader.GetString("eemail"),
                         Status = (Employee.EmployeeStatus)reader.GetInt32("estatus"),
@@ -98,7 +97,7 @@ namespace repository
                 SELECT project_id, projects.client_id AS client_id, lead_id, projects.name AS pname, projects.description AS pdescription,
                 projects.status AS pstatus, projects.deleted_at AS deleted_at,
                 clients.name AS cname, clients.address AS caddress, clients.city AS ccity, clients.zip AS czip, clients.country AS ccountry,
-                employees.name AS ename, employees.username AS eusername, employees.password AS epassword, employees.hours AS ehours,
+                employees.name AS ename, employees.username AS eusername, employees.hours AS ehours,
                 employees.email AS eemail, employees.status AS estatus, employees.role AS erole
 
                 FROM projects LEFT JOIN (clients, employees)
@@ -124,7 +123,6 @@ namespace repository
                         Id = reader.GetInt32("lead_id"),
                         Name = reader.GetString("ename"),
                         Username = reader.GetString("eusername"),
-                        Password = reader.GetString("epassword"),
                         Hours = reader.GetFloat("ehours"),
                         Email = reader.GetString("eemail"),
                         Status = (Employee.EmployeeStatus)reader.GetInt32("estatus"),
