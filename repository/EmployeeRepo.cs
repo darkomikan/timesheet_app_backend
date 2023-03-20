@@ -55,7 +55,6 @@ namespace repository
                     Id = reader.GetInt32("employee_id"),
                     Name = reader.GetString("name"),
                     Username = reader.GetString("username"),
-                    Password = reader.GetString("password"),
                     Hours = reader.GetFloat("hours"),
                     Email = reader.GetString("email"),
                     Status = (Employee.EmployeeStatus)reader.GetInt32("status"),
@@ -83,7 +82,6 @@ namespace repository
                     Id = reader.GetInt32("employee_id"),
                     Name = reader.GetString("name"),
                     Username = reader.GetString("username"),
-                    Password = reader.GetString("password"),
                     Hours = reader.GetFloat("hours"),
                     Email = reader.GetString("email"),
                     Status = (Employee.EmployeeStatus)reader.GetInt32("status"),
@@ -120,13 +118,12 @@ namespace repository
             command.CommandText =
             @"
                 UPDATE employees
-                SET name = @name, username = @username, password = @password, hours = @hours,
+                SET name = @name, username = @username, hours = @hours,
                 email = @email, status = @status, role = @role
                 WHERE employee_id = @id
             ";
             command.Parameters.AddWithValue("@name", item.Name);
             command.Parameters.AddWithValue("@username", item.Username);
-            command.Parameters.AddWithValue("@password", item.Password);
             command.Parameters.AddWithValue("@hours", item.Hours);
             command.Parameters.AddWithValue("@email", item.Email);
             command.Parameters.AddWithValue("@status", (int)item.Status);

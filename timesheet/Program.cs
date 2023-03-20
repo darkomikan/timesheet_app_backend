@@ -9,9 +9,11 @@ builder.Services.AddScoped<IRepository<Category>, CategoryRepo>();
 builder.Services.AddScoped<IRepository<Client>, ClientRepo>();
 builder.Services.AddScoped<IRepository<Employee>, EmployeeRepo>();
 builder.Services.AddScoped<IRepository<Project>, ProjectRepo>();
+builder.Services.AddSingleton<AuthService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ClientService>();
 builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<ProjectService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

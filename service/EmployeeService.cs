@@ -3,7 +3,6 @@ using repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,14 +10,13 @@ namespace service
 {
     public class EmployeeService
     {
-        private const int keySize = 64;
-        private const int iterations = 350000;
-        private readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
         private readonly IRepository<Employee> employeeRepo;
+        private readonly AuthService authService;
 
-        public EmployeeService(IRepository<Employee> employeeRepo)
+        public EmployeeService(IRepository<Employee> employeeRepo, AuthService authService)
         {
             this.employeeRepo = employeeRepo;
+            this.authService = authService;
         }
 
         public Employee[] GetEmployees()
@@ -33,9 +31,7 @@ namespace service
 
         public void InsertEmployee(Employee employee)
         {
-            byte[] salt = RandomNumberGenerator.GetBytes(keySize);
-            var hash = Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(employee.Password), salt, iterations, hashAlgorithm, keySize);
-            employee.Password = Convert.ToHexString(hash) + Convert.ToHexString(salt);
+            employee.Password = authService.GetHashAndSalt(employee.Password);
             employeeRepo.Insert(employee);
         }
 
@@ -53,11 +49,7 @@ namespace service
         {
             Employee? emp = ((EmployeeRepo)employeeRepo).GetByUsername(username);
             if (emp != null)
-            {
-                var newHash = Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(password),
-                    Convert.FromHexString(emp.Password.Substring(128)), iterations, hashAlgorithm, keySize);
-                return newHash.SequenceEqual(Convert.FromHexString(emp.Password.Substring(0, 128)));
-            }
+                return authService.VerifyHash(password, emp.Password);
             return false;
         }
     }
