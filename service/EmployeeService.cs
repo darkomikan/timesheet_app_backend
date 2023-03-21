@@ -40,6 +40,11 @@ namespace service
             employeeRepo.Update(employee);
         }
 
+        public void UpdateEmployeePassword(string username, string password)
+        {
+            ((EmployeeRepo)employeeRepo).UpdatePassword(username, authService.GetHashAndSalt(password));
+        }
+
         public void DeleteEmployee(int id)
         {
             employeeRepo.Delete(id);

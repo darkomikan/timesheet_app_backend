@@ -132,6 +132,22 @@ namespace repository
             command.ExecuteNonQuery();
         }
 
+        public void UpdatePassword(string username, string password)
+        {
+            using MySqlConnection connection = new MySqlConnection(connectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText =
+            @"
+                UPDATE employees
+                SET password = @password
+                WHERE username = @username
+            ";
+            command.Parameters.AddWithValue("@password", password);
+            command.Parameters.AddWithValue("@username", username);
+            command.ExecuteNonQuery();
+        }
+
         public Employee? GetByUsername(string username)
         {
             using MySqlConnection connection = new MySqlConnection(connectionString);
