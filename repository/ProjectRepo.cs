@@ -32,7 +32,7 @@ namespace repository
                 @"
                     UPDATE projects
                     SET deleted_at = @date
-                    WHERE project_id = @id
+                    WHERE project_id = @id AND deleted_at IS NULL
                 ";
                 command.Parameters.AddWithValue("@date", DateTime.Now);
                 command.Parameters.AddWithValue("@id", id);
@@ -195,7 +195,7 @@ namespace repository
                     UPDATE projects
                     SET name = client_id = @client_id, lead_id = @lead_id, name = @name,
                     description = @description, status = @status
-                    WHERE project_id = @id
+                    WHERE project_id = @id AND deleted_at IS NULL
                 ";
                 command.Parameters.AddWithValue("@client_id", item.Client.Id);
                 command.Parameters.AddWithValue("@lead_id", item.Lead.Id);

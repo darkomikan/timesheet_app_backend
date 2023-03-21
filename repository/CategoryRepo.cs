@@ -33,7 +33,7 @@ namespace repository
                 @"
                     UPDATE categories
                     SET deleted_at = @date
-                    WHERE category_id = @id
+                    WHERE category_id = @id AND deleted_at IS NULL
                 ";
                 command.Parameters.AddWithValue("@date", DateTime.Now);
                 command.Parameters.AddWithValue("@id", id);
@@ -127,7 +127,7 @@ namespace repository
                 @"
                     UPDATE categories
                     SET name = @name
-                    WHERE category_id = @id
+                    WHERE category_id = @id AND deleted_at IS NULL
                 ";
                 command.Parameters.AddWithValue("@name", item.Name);
                 command.Parameters.AddWithValue("@id", item.Id);

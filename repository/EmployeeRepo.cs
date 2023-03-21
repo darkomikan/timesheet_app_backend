@@ -32,7 +32,7 @@ namespace repository
                 @"
                     UPDATE employees
                     SET deleted_at = @date
-                    WHERE employee_id = @id
+                    WHERE employee_id = @id AND deleted_at IS NULL
                 ";
                 command.Parameters.AddWithValue("@date", DateTime.Now);
                 command.Parameters.AddWithValue("@id", id);
@@ -158,7 +158,7 @@ namespace repository
                     UPDATE employees
                     SET name = @name, username = @username, hours = @hours,
                     email = @email, status = @status, role = @role
-                    WHERE employee_id = @id
+                    WHERE employee_id = @id AND deleted_at IS NULL
                 ";
                 command.Parameters.AddWithValue("@name", item.Name);
                 command.Parameters.AddWithValue("@username", item.Username);
@@ -187,7 +187,7 @@ namespace repository
                 @"
                     UPDATE employees
                     SET password = @password
-                    WHERE username = @username
+                    WHERE username = @username AND deleted_at IS NULL
                 ";
                 command.Parameters.AddWithValue("@password", password);
                 command.Parameters.AddWithValue("@username", username);

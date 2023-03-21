@@ -32,7 +32,7 @@ namespace repository
                 @"
                     UPDATE clients
                     SET deleted_at = @date
-                    WHERE client_id = @id
+                    WHERE client_id = @id AND deleted_at IS NULL
                 ";
                 command.Parameters.AddWithValue("@date", DateTime.Now);
                 command.Parameters.AddWithValue("@id", id);
@@ -148,7 +148,7 @@ namespace repository
                 @"
                     UPDATE clients
                     SET address = @address, city = @city, country = @country, name = @name, zip = @zip
-                    WHERE client_id = @id
+                    WHERE client_id = @id AND deleted_at IS NULL
                 ";
                 command.Parameters.AddWithValue("@address", item.Address);
                 command.Parameters.AddWithValue("@city", item.City);
