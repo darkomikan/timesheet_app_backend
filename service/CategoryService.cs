@@ -22,7 +22,7 @@ namespace service
             return categoryRepo.GetAll();
         }
 
-        public Category? GetCategoryById(int id)
+        public Category GetCategoryById(int id)
         {
             return categoryRepo.Get(id);
         }

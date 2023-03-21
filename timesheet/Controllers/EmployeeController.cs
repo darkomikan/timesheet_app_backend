@@ -16,7 +16,7 @@ namespace timesheet.Controllers
         }
 
         [HttpGet]
-        public Employee? Get(int id)
+        public Employee Get(int id)
         {
             return employeeService.GetEmployeeById(id);
         }

@@ -16,7 +16,7 @@ namespace timesheet.Controllers
         }
 
         [HttpGet]
-        public Project? Get(int id)
+        public Project Get(int id)
         {
             return projectService.GetProjectById(id);
         }

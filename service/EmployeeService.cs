@@ -1,4 +1,5 @@
-﻿using domainEntities.Models;
+﻿using domainEntities.Exceptions;
+using domainEntities.Models;
 using repository;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace service
             return employeeRepo.GetAll();
         }
 
-        public Employee? GetEmployeeById(int id)
+        public Employee GetEmployeeById(int id)
         {
             return employeeRepo.Get(id);
         }
@@ -52,10 +53,15 @@ namespace service
 
         public bool VerifyPassword(string username, string password)
         {
-            Employee? emp = ((EmployeeRepo)employeeRepo).GetByUsername(username);
-            if (emp != null)
+            try
+            {
+                Employee emp = ((EmployeeRepo)employeeRepo).GetByUsername(username);
                 return authService.VerifyHash(password, emp.Password);
-            return false;
+            }
+            catch (NotFoundException)
+            {
+                return false;
+            }
         }
     }
 }

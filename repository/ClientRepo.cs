@@ -1,4 +1,5 @@
 ﻿using domainEntities.Models;
+using domainEntities.Exceptions;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using System;
@@ -22,108 +23,146 @@ namespace repository
 
         public void Delete(int id)
         {
-            using MySqlConnection connection = new MySqlConnection(connectionString);
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText =
-            @"
-                UPDATE clients
-                SET deleted_at = @date
-                WHERE client_id = @id
-            ";
-            command.Parameters.AddWithValue("@date", DateTime.Now);
-            command.Parameters.AddWithValue("@id", id);
-            command.ExecuteNonQuery();
+            try
+            { 
+                using MySqlConnection connection = new MySqlConnection(connectionString);
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText =
+                @"
+                    UPDATE clients
+                    SET deleted_at = @date
+                    WHERE client_id = @id
+                ";
+                command.Parameters.AddWithValue("@date", DateTime.Now);
+                command.Parameters.AddWithValue("@id", id);
+                command.ExecuteNonQuery();
+                if (command.ExecuteNonQuery() < 1)
+                    throw new NotFoundException("client");
+            }
+            catch (MySqlException)
+            {
+                throw new InternalServerException("Unable to successfully connect to database.");
+            }
         }
 
-        public Client? Get(int id)
+        public Client Get(int id)
         {
-            using MySqlConnection connection = new MySqlConnection(connectionString);
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText =
-            @"
-                SELECT *
-                FROM clients
-                WHERE client_id = @id AND deleted_at IS NULL
-            ";
-            command.Parameters.AddWithValue("@id", id);
-            using var reader = command.ExecuteReader();
-            if (reader.Read())
-                return new Client
-                {
-                    Id = reader.GetInt32("client_id"),
-                    Name = reader.GetString("name"),
-                    Address = reader.GetString("address"),
-                    City = reader.GetString("city"),
-                    Country = reader.GetString("country"),
-                    Zip = reader.GetString("zip")
-                };
-            else
-                return null;
+            try
+            {
+                using MySqlConnection connection = new MySqlConnection(connectionString);
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText =
+                @"
+                    SELECT *
+                    FROM clients
+                    WHERE client_id = @id AND deleted_at IS NULL
+                ";
+                command.Parameters.AddWithValue("@id", id);
+                using var reader = command.ExecuteReader();
+                if (reader.Read())
+                    return new Client
+                    {
+                        Id = reader.GetInt32("client_id"),
+                        Name = reader.GetString("name"),
+                        Address = reader.GetString("address"),
+                        City = reader.GetString("city"),
+                        Country = reader.GetString("country"),
+                        Zip = reader.GetString("zip")
+                    };
+                else
+                    throw new NotFoundException("client");
+            }
+            catch (MySqlException)
+            {
+                throw new InternalServerException("Unable to successfully connect to database.");
+            }
         }
 
         public Client[] GetAll()
         {
-            List<Client> result = new List<Client>();
-            using MySqlConnection connection = new MySqlConnection(connectionString);
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText =
-            @"
-                SELECT * FROM clients
-                WHERE deleted_at IS NULL
-            ";
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-                result.Add(new Client
-                {
-                    Id = reader.GetInt32("client_id"),
-                    Name = reader.GetString("name"),
-                    Address = reader.GetString("address"),
-                    City = reader.GetString("city"),
-                    Country = reader.GetString("country"),
-                    Zip = reader.GetString("zip")
-                });
-            return result.ToArray();
+            try
+            {
+                List<Client> result = new List<Client>();
+                using MySqlConnection connection = new MySqlConnection(connectionString);
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText =
+                @"
+                    SELECT * FROM clients
+                    WHERE deleted_at IS NULL
+                ";
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                    result.Add(new Client
+                    {
+                        Id = reader.GetInt32("client_id"),
+                        Name = reader.GetString("name"),
+                        Address = reader.GetString("address"),
+                        City = reader.GetString("city"),
+                        Country = reader.GetString("country"),
+                        Zip = reader.GetString("zip")
+                    });
+                return result.ToArray();
+            }
+            catch (MySqlException)
+            {
+                throw new InternalServerException("Unable to successfully connect to database.");
+            }
         }
 
         public void Insert(Client item)
         {
-            using MySqlConnection connection = new MySqlConnection(connectionString);
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText =
-            @"
-                INSERT INTO clients (address, city, country, name, zip)
-                VALUES (@address, @city, @country, @name, @zip)
-            ";
-            command.Parameters.AddWithValue("@address", item.Address);
-            command.Parameters.AddWithValue("@city", item.City);
-            command.Parameters.AddWithValue("@country", item.Country);
-            command.Parameters.AddWithValue("@name", item.Name);
-            command.Parameters.AddWithValue("@zip", item.Zip);
-            command.ExecuteNonQuery();
+            try
+            {
+                using MySqlConnection connection = new MySqlConnection(connectionString);
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText =
+                @"
+                    INSERT INTO clients (address, city, country, name, zip)
+                    VALUES (@address, @city, @country, @name, @zip)
+                ";
+                command.Parameters.AddWithValue("@address", item.Address);
+                command.Parameters.AddWithValue("@city", item.City);
+                command.Parameters.AddWithValue("@country", item.Country);
+                command.Parameters.AddWithValue("@name", item.Name);
+                command.Parameters.AddWithValue("@zip", item.Zip);
+                command.ExecuteNonQuery();
+            }
+            catch (MySqlException)
+            {
+                throw new InternalServerException("Unable to successfully connect to database.");
+            }
         }
 
         public void Update(Client item)
         {
-            using MySqlConnection connection = new MySqlConnection(connectionString);
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText =
-            @"
-                UPDATE clients
-                SET address = @address, city = @city, country = @country, name = @name, zip = @zip
-                WHERE client_id = @id
-            ";
-            command.Parameters.AddWithValue("@address", item.Address);
-            command.Parameters.AddWithValue("@city", item.City);
-            command.Parameters.AddWithValue("@country", item.Country);
-            command.Parameters.AddWithValue("@name", item.Name);
-            command.Parameters.AddWithValue("@zip", item.Zip);
-            command.Parameters.AddWithValue("@id", item.Id);
-            command.ExecuteNonQuery();
+            try
+            {
+                using MySqlConnection connection = new MySqlConnection(connectionString);
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText =
+                @"
+                    UPDATE clients
+                    SET address = @address, city = @city, country = @country, name = @name, zip = @zip
+                    WHERE client_id = @id
+                ";
+                command.Parameters.AddWithValue("@address", item.Address);
+                command.Parameters.AddWithValue("@city", item.City);
+                command.Parameters.AddWithValue("@country", item.Country);
+                command.Parameters.AddWithValue("@name", item.Name);
+                command.Parameters.AddWithValue("@zip", item.Zip);
+                command.Parameters.AddWithValue("@id", item.Id);
+                if (command.ExecuteNonQuery() < 1)
+                    throw new NotFoundException("client");
+            }
+            catch (MySqlException)
+            {
+                throw new InternalServerException("Unable to successfully connect to database.");
+            }
         }
     }
 }
