@@ -22,7 +22,7 @@ namespace service
             return clientRepo.GetAll();
         }
 
-        public Client? GetClientById(int id)
+        public Client GetClientById(int id)
         {
             return clientRepo.Get(id);
         }

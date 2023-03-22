@@ -16,7 +16,7 @@ namespace timesheet.Controllers
         }
 
         [HttpGet]
-        public Client? Get(int id) 
+        public Client Get(int id) 
         {
             return clientService.GetClientById(id);
         }

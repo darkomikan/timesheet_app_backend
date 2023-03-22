@@ -16,7 +16,7 @@ namespace timesheet.Controllers
         }
 
         [HttpGet]
-        public Category? Get(int id)
+        public Category Get(int id)
         {
             return categoryService.GetCategoryById(id);
         }

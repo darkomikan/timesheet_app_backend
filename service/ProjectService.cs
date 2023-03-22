@@ -22,7 +22,7 @@ namespace service
             return projectRepo.GetAll();
         }
 
-        public Project? GetProjectById(int id)
+        public Project GetProjectById(int id)
         {
             return projectRepo.Get(id);
         }
