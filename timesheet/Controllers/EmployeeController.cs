@@ -1,4 +1,5 @@
 ﻿using domainEntities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using service;
 
@@ -15,42 +16,53 @@ namespace timesheet.Controllers
             this.employeeService = employeeService;
         }
 
+        [Authorize(Roles = "Admin,Worker")]
         [HttpGet]
         public Employee Get(int id)
         {
             return employeeService.GetEmployeeById(id);
         }
 
+        [Authorize(Roles = "Admin,Worker")]
         [HttpGet]
         public Employee[] GetAll()
         {
             return employeeService.GetEmployees();
         }
 
-        [HttpGet]
-        public bool Login(string username, string password)
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult Login(string username, string password)
         {
-            return employeeService.VerifyPassword(username, password);
+            string token = employeeService.VerifyPassword(username, password);
+            if (token != string.Empty)
+                return Ok(token);
+            else
+                return Unauthorized();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public void Add(Employee employee)
         {
             employeeService.InsertEmployee(employee);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public void Update(Employee employee)
         {
             employeeService.UpdateEmployee(employee);
         }
 
+        [Authorize(Roles = "Admin,Worker")]
         [HttpPut]
         public void ChangePassword(string username, string password)
         {
             employeeService.UpdateEmployeePassword(username, password);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public void Delete(int id)
         {

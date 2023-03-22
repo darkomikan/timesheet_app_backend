@@ -3,6 +3,7 @@ using domainEntities.Models;
 using repository;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,16 +52,19 @@ namespace service
             employeeRepo.Delete(id);
         }
 
-        public bool VerifyPassword(string username, string password)
+        public string VerifyPassword(string username, string password)
         {
             try
             {
                 Employee emp = ((EmployeeRepo)employeeRepo).GetByUsername(username);
-                return authService.VerifyHash(password, emp.Password);
+                if (authService.VerifyHash(password, emp.Password))
+                    return authService.GenerateJSONWebToken(emp);
+                else
+                    return string.Empty;
             }
             catch (NotFoundException)
             {
-                return false;
+                return string.Empty;
             }
         }
     }

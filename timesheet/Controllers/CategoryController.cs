@@ -1,6 +1,8 @@
 ﻿using domainEntities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using service;
+using System.Data;
 
 namespace timesheet.Controllers
 {
@@ -15,30 +17,35 @@ namespace timesheet.Controllers
             this.categoryService = categoryService;
         }
 
+        [Authorize(Roles = "Admin,Worker")]
         [HttpGet]
         public Category Get(int id)
         {
             return categoryService.GetCategoryById(id);
         }
 
+        [Authorize(Roles = "Admin,Worker")]
         [HttpGet]
         public Category[] GetAll()
         {
             return categoryService.GetCategories();
         }
 
+        [Authorize(Roles = "Admin,Worker")]
         [HttpPost]
         public void Add(Category category)
         {
             categoryService.InsertCategory(category);
         }
 
+        [Authorize(Roles = "Admin,Worker")]
         [HttpPut] 
         public void Update(Category category)
         {
             categoryService.UpdateCategory(category);
         }
 
+        [Authorize(Roles = "Admin,Worker")]
         [HttpDelete] 
         public void Delete(int id)
         {
