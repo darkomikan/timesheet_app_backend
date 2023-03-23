@@ -12,6 +12,7 @@ public class Project
     public int Id { get; set; }
     public Client Client { get; set; }
     public Employee Lead { get; set; }
+    public Employee[] Employees { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public ProjectStatus Status { get; set; }

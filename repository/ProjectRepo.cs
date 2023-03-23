@@ -167,14 +167,32 @@ namespace repository
                 var command = connection.CreateCommand();
                 command.CommandText =
                 @"
+                    START TRANSACTION;
+
                     INSERT INTO projects (client_id, lead_id, name, description, status)
-                    VALUES (@client_id, @lead_id, @name, @description, @status)
+                    VALUES (@client_id, @lead_id, @name, @description, @status);
+
+                    SELECT LAST_INSERT_ID();
                 ";
                 command.Parameters.AddWithValue("@client_id", item.Client.Id);
                 command.Parameters.AddWithValue("@lead_id", item.Lead.Id);
                 command.Parameters.AddWithValue("@name", item.Name);
                 command.Parameters.AddWithValue("@description", item.Description);
                 command.Parameters.AddWithValue("@status", (int)item.Status);
+                {
+                    // get inserted project's assigned id
+                    using var reader = command.ExecuteReader();
+                    if (reader.Read())
+                        item.Id = reader.GetInt32("LAST_INSERT_ID()");
+                }
+
+                StringBuilder sb = new StringBuilder("INSERT INTO works_on (employee_id, project_id) VALUES ");
+                foreach (var emp in item.Employees)
+                    sb.Append($"({emp.Id}, {item.Id}),");
+                sb.Remove(sb.Length - 1, 1).Append(';').Append(" COMMIT;");
+
+                command = connection.CreateCommand();
+                command.CommandText = sb.ToString();
                 command.ExecuteNonQuery();
             }
             catch (MySqlException)
