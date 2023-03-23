@@ -1,7 +1,9 @@
-﻿using domainEntities.Models;
+﻿using domainEntities.Exceptions;
+using domainEntities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using service;
+using System;
 
 namespace timesheet.Controllers
 {
@@ -34,11 +36,15 @@ namespace timesheet.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            string token = employeeService.VerifyPassword(username, password);
-            if (token != string.Empty)
+            try
+            {
+                string token = employeeService.Login(username, password);
                 return Ok(token);
-            else
-                return Unauthorized();
+            }
+            catch (UnauthorizedException ex)
+            {
+                return Unauthorized(new { error = ex.Message });
+            }
         }
 
         [Authorize(Roles = "Admin")]

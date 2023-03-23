@@ -29,7 +29,7 @@ namespace timesheet
             httpContext.Response.StatusCode = exception switch
             {
                 BadRequestException => StatusCodes.Status400BadRequest,
-                ForbiddenException => StatusCodes.Status403Forbidden,
+                UnauthorizedException => StatusCodes.Status401Unauthorized,
                 NotFoundException => StatusCodes.Status404NotFound,
                 _ => StatusCodes.Status500InternalServerError
             };

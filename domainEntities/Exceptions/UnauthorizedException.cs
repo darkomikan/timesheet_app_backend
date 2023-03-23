@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace domainEntities.Exceptions
 {
-    public class ForbiddenException : Exception
+    public class UnauthorizedException : Exception
     {
-        public ForbiddenException(string message) : base(message) { }
+        public UnauthorizedException(string message) : base(message) { }
     }
 }

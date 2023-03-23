@@ -52,7 +52,7 @@ namespace service
             employeeRepo.Delete(id);
         }
 
-        public string VerifyPassword(string username, string password)
+        public string Login(string username, string password)
         {
             try
             {
@@ -60,11 +60,11 @@ namespace service
                 if (authService.VerifyHash(password, emp.Password))
                     return authService.GenerateJSONWebToken(emp);
                 else
-                    return string.Empty;
+                    throw new UnauthorizedException("Password is not correct.");
             }
             catch (NotFoundException)
             {
-                return string.Empty;
+                throw new UnauthorizedException($"Username {username} does not exist.");
             }
         }
     }
