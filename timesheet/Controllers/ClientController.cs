@@ -26,9 +26,9 @@ namespace timesheet.Controllers
 
         [Authorize(Roles = "Admin,Worker")]
         [HttpGet]
-        public Client[] GetAll()
+        public Client[] GetAll(string pattern)
         {
-            return clientService.GetClients();
+            return clientService.GetClients(pattern);
         }
 
         [Authorize(Roles = "Admin")]

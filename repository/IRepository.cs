@@ -10,7 +10,7 @@ namespace repository
     {
         void Delete(int id);
         T Get(int id);
-        T[] GetAll();
+        T[] GetAll(string pattern);
         void Insert(T item);
         void Update(T item);
     }

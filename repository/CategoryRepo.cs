@@ -72,7 +72,7 @@ namespace repository
             }
         }
 
-        public Category[] GetAll()
+        public Category[] GetAll(string pattern)
         {
             try
             {
@@ -83,8 +83,9 @@ namespace repository
                 command.CommandText =
                 @"
                     SELECT * FROM categories
-                    WHERE deleted_at IS NULL
+                    WHERE deleted_at IS NULL AND name REGEXP @pattern
                 ";
+                command.Parameters.AddWithValue("@pattern", pattern);
                 using var reader = command.ExecuteReader();
                 while (reader.Read())
                     result.Add(new Category { Id = reader.GetInt32("category_id"), Name = reader.GetString("name") });

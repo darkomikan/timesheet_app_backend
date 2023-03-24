@@ -26,9 +26,9 @@ namespace timesheet.Controllers
 
         [Authorize(Roles = "Admin,Worker")]
         [HttpGet]
-        public Project[] GetAll()
+        public Project[] GetAll(string pattern)
         {
-            return projectService.GetProjects();
+            return projectService.GetProjects(pattern);
         }
 
         [Authorize(Roles = "Admin")]

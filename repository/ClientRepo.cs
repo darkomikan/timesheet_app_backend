@@ -80,7 +80,7 @@ namespace repository
             }
         }
 
-        public Client[] GetAll()
+        public Client[] GetAll(string pattern)
         {
             try
             {
@@ -91,8 +91,9 @@ namespace repository
                 command.CommandText =
                 @"
                     SELECT * FROM clients
-                    WHERE deleted_at IS NULL
+                    WHERE deleted_at IS NULL AND name REGEXP @pattern
                 ";
+                command.Parameters.AddWithValue("@pattern", pattern);
                 using var reader = command.ExecuteReader();
                 while (reader.Read())
                     result.Add(new Client

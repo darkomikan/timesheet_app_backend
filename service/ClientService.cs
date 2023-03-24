@@ -17,9 +17,9 @@ namespace service
             this.clientRepo = clientRepo;
         }
 
-        public Client[] GetClients()
+        public Client[] GetClients(string pattern)
         {
-            return clientRepo.GetAll();
+            return clientRepo.GetAll(pattern);
         }
 
         public Client GetClientById(int id)

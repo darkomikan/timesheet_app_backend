@@ -17,9 +17,9 @@ namespace service
             this.categoryRepo = categoryRepo;
         }
 
-        public Category[] GetCategories()
+        public Category[] GetCategories(string pattern)
         {
-            return categoryRepo.GetAll();
+            return categoryRepo.GetAll(pattern);
         }
 
         public Category GetCategoryById(int id)

@@ -21,9 +21,9 @@ namespace service
             this.authService = authService;
         }
 
-        public Employee[] GetEmployees()
+        public Employee[] GetEmployees(string pattern)
         {
-            return employeeRepo.GetAll();
+            return employeeRepo.GetAll(pattern);
         }
 
         public Employee GetEmployeeById(int id)

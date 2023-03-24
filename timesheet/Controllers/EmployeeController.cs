@@ -27,9 +27,9 @@ namespace timesheet.Controllers
 
         [Authorize(Roles = "Admin,Worker")]
         [HttpGet]
-        public Employee[] GetAll()
+        public Employee[] GetAll(string pattern)
         {
-            return employeeService.GetEmployees();
+            return employeeService.GetEmployees(pattern);
         }
 
         [AllowAnonymous]

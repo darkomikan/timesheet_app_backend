@@ -135,7 +135,7 @@ namespace repository
             }
         }
 
-        public Project[] GetAll()
+        public Project[] GetAll(string pattern)
         {
             try
             {
@@ -156,8 +156,9 @@ namespace repository
                     FROM projects LEFT JOIN (clients, employees, works_on, employees AS emps)
                     ON (clients.client_id = projects.client_id AND employees.employee_id = projects.lead_id AND
                     works_on.project_id = projects.project_id AND works_on.employee_id = emps.employee_id)
-                    WHERE projects.deleted_at IS NULL
+                    WHERE projects.deleted_at IS NULL AND projects.name REGEXP @pattern
                 ";
+                command.Parameters.AddWithValue("@pattern", pattern);
                 using var reader = command.ExecuteReader();
                 Project? cur = null;
                 while (reader.Read())
@@ -244,18 +245,36 @@ namespace repository
                         item.Id = reader.GetInt32("LAST_INSERT_ID()");
                 }
 
-                StringBuilder sb = new StringBuilder("INSERT INTO works_on (employee_id, project_id) VALUES ");
+                string str = string.Empty;
                 foreach (var emp in item.Employees)
-                    sb.Append($"({emp.Id}, {item.Id}),");
-                sb.Remove(sb.Length - 1, 1).Append(';').Append(" COMMIT;");
+                {
+                    if (str != string.Empty)
+                        str = string.Join(",", str, $"({emp.Id}, {item.Id})");
+                    else
+                        str = $"({emp.Id}, {item.Id})";
+                }
+                str = string.Join(" ", "INSERT INTO works_on (employee_id, project_id) VALUES", str);
+                str = string.Join(";", str, "COMMIT;");
 
                 command = connection.CreateCommand();
-                command.CommandText = sb.ToString();
+                command.CommandText = str;
                 command.ExecuteNonQuery();
             }
             catch (MySqlException)
             {
-                throw new InternalServerException("Unable to successfully connect to database.");
+                try
+                {
+                    using MySqlConnection connection = new MySqlConnection(connectionString);
+                    connection.Open();
+                    var command = connection.CreateCommand();
+                    command.CommandText = "ROLLBACK;";
+                    command.ExecuteNonQuery();
+                    throw new InternalServerException("Database transaction failed.");
+                }
+                catch (MySqlException)
+                {
+                    throw new InternalServerException("Unable to successfully connect to database.");
+                }
             }
         }
 

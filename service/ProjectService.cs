@@ -17,9 +17,9 @@ namespace service
             this.projectRepo = projectRepo;
         }
 
-        public Project[] GetProjects()
+        public Project[] GetProjects(string pattern)
         {
-            return projectRepo.GetAll();
+            return projectRepo.GetAll(pattern);
         }
 
         public Project GetProjectById(int id)
