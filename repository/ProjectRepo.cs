@@ -1,8 +1,10 @@
 ﻿using domainEntities.Exceptions;
 using domainEntities.Models;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -245,19 +247,12 @@ namespace repository
                         item.Id = reader.GetInt32("LAST_INSERT_ID()");
                 }
 
-                string str = string.Empty;
-                foreach (var emp in item.Employees)
-                {
-                    if (str != string.Empty)
-                        str = string.Join(",", str, $"({emp.Id}, {item.Id})");
-                    else
-                        str = $"({emp.Id}, {item.Id})";
-                }
-                str = string.Join(" ", "INSERT INTO works_on (employee_id, project_id) VALUES", str);
-                str = string.Join(";", str, "COMMIT;");
+                string query = "INSERT INTO works_on (employee_id, project_id) VALUES ";
+                IEnumerable<string> values = item.Employees.Select(emp => $"({emp.Id}, {item.Id})");
+                string fullQuery = query + string.Join(",", values) + "; COMMIT;";
 
                 command = connection.CreateCommand();
-                command.CommandText = str;
+                command.CommandText = fullQuery;
                 command.ExecuteNonQuery();
             }
             catch (MySqlException)
